@@ -12,7 +12,7 @@ CREATE TABLE LibraryDB.dbo.Books (
 
 ) ;
 
-CREATE TABLE LibraryDB.dbo.Members (
+CREATE TABLE LibraryDB.dbo.Users (
 
     ID IDENTITY(1,1) PRIMARY KEY ,
     First_Name VARCHAR(50) NOT NULL ,

@@ -41,7 +41,7 @@ public class BookController {
 
         Book book = bookRepository.findById(id).orElseThrow(() ->
                 new RuntimeException("Book not found with id: " + id)
-        );
+        ) ;
 
         book.setTitle(bookDetails.getTitle()) ;
         book.setAuthor(bookDetails.getAuthor()) ;
@@ -55,8 +55,10 @@ public class BookController {
 
     @DeleteMapping("/{id}")
     public String deleteBook(@PathVariable int id) {
+
         bookRepository.deleteById(id) ;
         return "Book deleted with id: " + id ;
+        
     }
-    
+
 }
