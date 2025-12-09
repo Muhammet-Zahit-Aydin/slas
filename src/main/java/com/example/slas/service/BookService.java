@@ -9,25 +9,25 @@ import java.util.List;
 @Service
 public class BookService {
 
-    private final BookRepository repo;
+    private final BookRepository repo ;
 
     public BookService(BookRepository repo) {
-        this.repo = repo;
+        this.repo = repo ;
     }
 
     public List<Book> getAll() {
-        return repo.findAll();
+        return repo.findAll() ;
     }
 
     public Book getById(Integer id) {
-        return repo.findById(id).orElse(null);
+        return repo.findById(id).orElse(null) ;
     }
 
     public Book save(Book p) {
-        return repo.save(p);
+        return repo.save(p) ;
     }
 
     public void delete(Integer id) {
-        repo.deleteById(id);
+        repo.deleteById(id) ;
     }
 }

@@ -12,18 +12,20 @@ public class Book {
     private String author ;
     private String genre ;
     private String isbn ;
+    private Integer publishedYear ;
     private Double price ;
 
     // Constructors
     public Book () {}
 
-    public Book (String title, String author, String genre, String isbn, Double price) {
+    public Book (String title , String author , String genre , String isbn , Integer publishedYear , Double price) {
 
-        this.title = title;
-        this.author = author;
-        this.genre = genre;
-        this.isbn = isbn;
-        this.price = price;
+        this.title = title ;
+        this.author = author ;
+        this.genre = genre ;
+        this.isbn = isbn ;
+        this.publishedYear = publishedYear ;
+        this.price = price ;
 
     }
 
@@ -32,36 +34,42 @@ public class Book {
         return id;
     }
     public String getTitle() {
-        return title;
+        return title ;
     }
     public String getAuthor() {
-        return author;
+        return author ;
     }
     public String getGenre() {
-        return genre;
+        return genre ;
     }
     public String getIsbn() {
-        return isbn;
+        return isbn ;
+    }
+    public Integer getPublishedYear() {
+        return publishedYear ;
     }
     public Double getPrice() {
-        return price;
+        return price ;
     }
 
     // Setter methods for all attributes
     public void setTitle(String title) {
-        this.title = title;
+        this.title = title ;
     }
     public void setAuthor(String author) {
-        this.author = author;
+        this.author = author ;
     }
     public void setGenre(String genre) {
-        this.genre = genre;
+        this.genre = genre ;
     }
     public void setIsbn(String isbn) {
-        this.isbn = isbn;
+        this.isbn = isbn ;
+    }
+    public void setPublishedYear(Integer publishedYear) {
+        this.publishedYear = publishedYear ;
     }
     public void setPrice(Double price) {
-        this.price = price;
+        this.price = price ;
     }
 
 }
