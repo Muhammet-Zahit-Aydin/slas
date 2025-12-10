@@ -1,59 +1,29 @@
-package com.example.slas.model;
+package com.example.slas.model ;
 
-import lombok.Data;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import jakarta.persistence.*;
-import java.util.Collection;
-import java.util.List;
+import com.example.slas.enums.Role;
+import jakarta.persistence.* ;
+import lombok.Data ;
 
 @Entity
+@Table(name = "library_users") //! Changing table name because "user" is a forbidden keyword in MSSQL
 @Data
-public class User implements UserDetails {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id ;
 
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String passwordHash;
-    private String memberType;
+    // Making email unique to prevent duplicate registrations
+    @Column(unique = true, nullable = false)
+    private String email ;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
-    }
+    @Column(nullable = false)
+    private String password ; // Will hold hashed password
 
-    @Override
-    public String getPassword() {
-        return passwordHash;
-    }
+    private String name ;
+    private String surname ;
 
-    @Override
-    public String getUsername() {
-        return email;  // Username = Email
-    }
+    @Enumerated(EnumType.STRING) // Putting enum as a string in database
+    private Role role ;
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 }

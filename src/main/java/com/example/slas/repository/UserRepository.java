@@ -1,11 +1,12 @@
-package com.example.slas.repository;
+package com.example.slas.repository ;
 
-import com.example.slas.model.User;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.example.slas.model.User ;
+import org.springframework.data.jpa.repository.JpaRepository ;
+import java.util.Optional ;
 
-import java.util.Optional;
+public interface UserRepository extends JpaRepository<User, Long> {
 
-public interface UserRepository extends JpaRepository<User, Integer> {
+    // Finds user by email for login purposes
+    Optional<User> findByEmail(String email) ;
 
-    Optional<User> findByEmail(String email);
 }

@@ -1,14 +1,15 @@
-package com.example.slas.dto;
+package com.example.slas.dto ;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data ;
+import com.example.slas.enums.Role ;
 
-@Getter @Setter
+@Data
 public class RegisterRequest {
 
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String memberType;
-    private String password;
+    private String name ;
+    private String surname ;
+    private String email ;
+    private String password ;
+    private Role role ;
+
 }
