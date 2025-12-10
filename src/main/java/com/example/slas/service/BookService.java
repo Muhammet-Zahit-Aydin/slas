@@ -1,34 +1,67 @@
-package com.example.slas.service;
+package com.example.slas.service ;
 
-import com.example.slas.model.Book;
-import com.example.slas.repository.BookRepository;
-import org.springframework.stereotype.Service;
+import com.example.slas.dto.BookResponse ;
+import com.example.slas.dto.BookSaveRequest ;
+import com.example.slas.model.Book ;
+import com.example.slas.enums.BookStatus ;
+import com.example.slas.repository.BookRepository ;
+import org.springframework.stereotype.Service ;
 
-import java.util.List;
+import java.util.List ;
+import java.util.stream.Collectors ;
 
 @Service
 public class BookService {
 
-    private final BookRepository repo ;
+    private final BookRepository bookRepository ;
 
-    public BookService(BookRepository repo) {
-        this.repo = repo ;
+    public BookService (BookRepository bookRepository) {
+
+        this.bookRepository = bookRepository ;
+
     }
 
-    public List<Book> getAll() {
-        return repo.findAll() ;
+    // Add new book
+    public BookResponse createBook (BookSaveRequest request) {
+
+        Book book = new Book() ;
+        book.setTitle(request.getTitle()) ;
+        book.setAuthor(request.getAuthor()) ;
+        book.setIsbn(request.getIsbn()) ;
+        book.setPageCount(request.getPageCount()) ;
+        book.setStatus(BookStatus.AVAILABLE) ;
+
+        Book savedBook = bookRepository.save(book) ;
+        return mapToDto(savedBook) ;
+
     }
 
-    public Book getById(Integer id) {
-        return repo.findById(id).orElse(null) ;
-    }
+    // List all books
+    public List<BookResponse> getAllBooks () {
 
-    public Book save(Book p) {
-        return repo.save(p) ;
-    }
+        return bookRepository.findAll().stream().map(this::mapToDto).collect(Collectors.toList()) ;
 
-    public void delete(Integer id) {
-        repo.deleteById(id) ;
     }
     
+    // Get book by ID
+    public BookResponse getBookById (Long id) {
+
+        Book book = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found")) ;
+        return mapToDto(book) ;
+
+    }
+
+    // Entity to DTO mapping
+    private BookResponse mapToDto(Book book) {
+
+        BookResponse response = new BookResponse() ;
+        response.setId(book.getId()) ;
+        response.setTitle(book.getTitle()) ;
+        response.setAuthor(book.getAuthor()) ;
+        response.setIsbn(book.getIsbn()) ;
+        response.setPageCount(book.getPageCount()) ;
+        response.setStatus(book.getStatus()) ;
+        return response ;
+        
+    }
 }

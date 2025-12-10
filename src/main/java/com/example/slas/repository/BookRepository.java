@@ -1,7 +1,11 @@
-package com.example.slas.repository;
+package com.example.slas.repository ;
 
-import com.example.slas.model.Book;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.example.slas.model.Book ;
+import org.springframework.data.jpa.repository.JpaRepository ;
 
-public interface BookRepository extends JpaRepository<Book, Integer> {
+public interface BookRepository extends JpaRepository<Book, Long> {
+
+    // İleride arama yapmak istersen:
+    // List<Book> findByTitleContaining(String keyword) ;
+
 }

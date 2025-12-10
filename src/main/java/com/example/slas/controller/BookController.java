@@ -1,64 +1,47 @@
-package com.example.slas.controller;
+package com.example.slas.controller ;
 
-import com.example.slas.model.Book;
-import com.example.slas.repository.BookRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import com.example.slas.dto.BookResponse ;
+import com.example.slas.dto.BookSaveRequest ;
+import com.example.slas.service.BookService ;
+import org.springframework.http.HttpStatus ;
+import org.springframework.http.ResponseEntity ;
+import org.springframework.security.access.prepost.PreAuthorize ;
+import org.springframework.web.bind.annotation.* ;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.List ;
 
 @RestController
-@RequestMapping("/api/book")
+@RequestMapping("/api/books")
 public class BookController {
 
-    @Autowired
-    private BookRepository bookRepository ;
+    private final BookService bookService ;
+
+    public BookController (BookService bookService) {
+
+        this.bookService = bookService ;
+
+    }
 
     @GetMapping
-    public List<Book> getAllBooks () {
+    public ResponseEntity<List<BookResponse>> getAllBooks () {
 
-        return bookRepository.findAll() ;
-
-    }
-
-    @PostMapping
-    public Book createBook (@RequestBody Book book) {
-
-        return bookRepository.save(book) ;
+        return ResponseEntity.ok(bookService.getAllBooks()) ;
 
     }
-
+    
     @GetMapping("/{id}")
-    public Optional<Book> getBookById (@PathVariable int id) {
+    public ResponseEntity<BookResponse> getBookById (@PathVariable Long id) {
 
-        return bookRepository.findById(id) ;
-
-    }
-
-    @PutMapping("/{id}")
-    public Book updateBook (@PathVariable int id, @RequestBody Book bookDetails) {
-
-        Book book = bookRepository.findById(id).orElseThrow(() ->
-                new RuntimeException("Book not found with id: " + id)
-        ) ;
-
-        book.setTitle(bookDetails.getTitle()) ;
-        book.setAuthor(bookDetails.getAuthor()) ;
-        book.setGenre(bookDetails.getGenre()) ;
-        book.setIsbn(bookDetails.getIsbn()) ;
-        book.setPrice(bookDetails.getPrice()) ;
-
-        return bookRepository.save(book) ;
+        return ResponseEntity.ok(bookService.getBookById(id)) ;
 
     }
 
-    @DeleteMapping("/{id}")
-    public String deleteBook(@PathVariable int id) {
-
-        bookRepository.deleteById(id) ;
-        return "Book deleted with id: " + id ;
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping
+    public ResponseEntity<BookResponse> saveBook (@RequestBody BookSaveRequest request) {
         
-    }
+        BookResponse response = bookService.createBook(request) ;
+        return ResponseEntity.status(HttpStatus.CREATED).body(response) ;
 
+    }
 }

@@ -1,0 +1,39 @@
+==========ADMINS==========
+
+{
+  "name": "Zahit",
+  "surname": "Aydın",
+  "email": "admin@kutuphane.com",
+  "password": "777444000",
+  "role": "ADMIN"
+}
+
+
+{
+  "email": "admin@kutuphane.com",
+  "password": "777444000"
+}
+
+==========MEMBERS==========
+
+{
+  "name": "Ahmet",
+  "surname": "Aydın",
+  "email": "member@kutuphane.com",
+  "password": "bruhmoment",
+  "role": "MEMBER"
+}
+
+{
+  "email": "member@kutuphane.com",
+  "password": "bruhmoment"
+}
+
+==========BOOKS==========
+
+{
+  "title": "Suç ve Ceza",
+  "author": "Dostoyevski",
+  "isbn": "978123456789",
+  "pageCount": 680
+}
