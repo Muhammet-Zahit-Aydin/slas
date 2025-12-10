@@ -25,46 +25,45 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService ;
 
     @Override
-    protected void doFilterInternal (@NonNull HttpServletRequest request , @NonNull HttpServletResponse response , @NonNull FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request , @NonNull HttpServletResponse response , @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-        // Take authorization from header
         final String authHeader = request.getHeader("Authorization") ;
         final String jwt ;
         final String userEmail ;
 
-        // If there is no token or it does not start with "Bearer "
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-
+            
             filterChain.doFilter(request, response) ;
             return ;
 
         }
 
-        // Cut Bearer from the token and take the rest
         jwt = authHeader.substring(7) ;
         userEmail = jwtService.extractUsername(jwt) ;
 
-        // Check if token is valid and user is not authenticated
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             
-            // Find user in database
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail) ;
 
-            // If the token is valit let user access the system
             if (jwtService.isTokenValid(jwt, userDetails)) {
                 
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails , null , userDetails.getAuthorities()) ;
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities()
+                ) ;
                 
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 
-                // Save it in system
                 SecurityContextHolder.getContext().setAuthentication(authToken) ;
 
-            }
+                System.out.println("--------------------------------------------------") ;
+                System.out.println("CASUS: Token Kimin İçin? -> " + userDetails.getUsername()) ;
+                System.out.println("CASUS: Yüklenen Yetkiler -> " + userDetails.getAuthorities()) ;
 
+            }
         }
         
-        // Continue the filter chain
         filterChain.doFilter(request, response) ;
 
     }

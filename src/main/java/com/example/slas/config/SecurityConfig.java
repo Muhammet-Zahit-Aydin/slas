@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager ;
 import org.springframework.security.authentication.AuthenticationProvider ;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider ;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration ;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity ;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity ;
 import org.springframework.security.config.http.SessionCreationPolicy ;
@@ -18,6 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -25,19 +27,19 @@ public class SecurityConfig {
     private final CustomUserDetailsService userDetailsService ;
 
     @Bean
-    public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
+            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authenticationProvider(authenticationProvider())
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll() // Make login and register endpoints accessible
-                .anyRequest().authenticated() // Lock the rest
-            )
-            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Hold session
-            .authenticationProvider(authenticationProvider()) 
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class) ;
+            .requestMatchers("/api/auth/**").permitAll()
+            .requestMatchers("/api/users/test-auth").authenticated()
+            .anyRequest().authenticated()
+            ) ;
 
         return http.build() ;
-
     }
 
     @Bean

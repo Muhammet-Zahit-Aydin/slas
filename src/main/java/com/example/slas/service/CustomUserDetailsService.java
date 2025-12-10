@@ -29,9 +29,12 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         // Translating user entity Spring Securty language
         return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name())) // Granting role
+
+                user.getEmail() ,
+                user.getPassword() ,
+
+                Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name())) 
+                
         ) ;
 
     }

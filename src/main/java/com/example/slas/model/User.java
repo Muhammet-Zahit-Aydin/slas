@@ -5,7 +5,7 @@ import jakarta.persistence.* ;
 import lombok.Data ;
 
 @Entity
-@Table(name = "library_users") //! Changing table name because "user" is a forbidden keyword in MSSQL
+@Table(name = "users_table") //! Changing table name because "user" is a forbidden keyword in MSSQL
 @Data
 public class User {
 
