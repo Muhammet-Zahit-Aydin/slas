@@ -31,5 +31,8 @@ public class Borrowing {
 
     // When was the book actually returned?
     private LocalDate actualReturnDate ;
+
+    // Fine ammount for late returns
+    private Double penaltyAmount ;
     
 }

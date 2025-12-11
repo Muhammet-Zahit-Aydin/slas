@@ -1,5 +1,6 @@
 package com.example.slas.controller ;
 
+import com.example.slas.dto.BorrowHistoryResponse;
 import com.example.slas.dto.BorrowRequest ;
 import com.example.slas.dto.ReturnRequest;
 import com.example.slas.service.BorrowService ;
@@ -7,6 +8,8 @@ import org.springframework.http.ResponseEntity ;
 import org.springframework.security.core.Authentication ;
 import org.springframework.security.core.context.SecurityContextHolder ;
 import org.springframework.web.bind.annotation.* ;
+
+import java.util.List ;
 
 @RestController
 @RequestMapping("/api/borrow")
@@ -17,6 +20,16 @@ public class BorrowController {
     public BorrowController (BorrowService borrowService) {
 
         this.borrowService = borrowService ;
+
+    }
+
+    @GetMapping("/my-history")
+    public ResponseEntity<List<BorrowHistoryResponse>> getMyHistory() {
+        
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication() ;
+        String currentEmail = auth.getName() ;
+
+        return ResponseEntity.ok(borrowService.getMyHistory(currentEmail)) ;
 
     }
 

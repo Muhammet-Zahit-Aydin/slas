@@ -2,6 +2,7 @@ package com.example.slas.service ;
 
 import com.example.slas.dto.BorrowRequest ;
 import com.example.slas.dto.ReturnRequest ;
+import com.example.slas.dto.BorrowHistoryResponse ;
 import com.example.slas.model.Book ;
 import com.example.slas.model.Borrowing ;
 import com.example.slas.model.User ;
@@ -12,6 +13,8 @@ import com.example.slas.repository.UserRepository ;
 import org.springframework.stereotype.Service ;
 import org.springframework.transaction.annotation.Transactional ;
 
+import java.util.List ;
+import java.util.ArrayList ;
 import java.time.LocalDate ;
 
 @Service
@@ -87,9 +90,6 @@ public class BorrowService {
         }
 
         // Find related borrowing record
-        // Borrowing borrowing = borrowingRepository.findByUserAndBookAndActualReturnDateIsNull(user, book)
-        //         .orElseThrow(() -> new RuntimeException("There is no active borrowing record for this book")) ;
-
         System.out.println("Sorgulaniyor -> User ID: " + user.getId() + " | Book ID: " + book.getId()) ;
 
         Borrowing borrowing = borrowingRepository.findBorrowingByIds(user.getId(), book.getId())
@@ -106,6 +106,39 @@ public class BorrowService {
         book.setStatus(BookStatus.AVAILABLE) ;
         bookRepository.save(book) ;
 
+    }
+
+    // Kullanıcının ödünç geçmişini getirir
+    public List<BorrowHistoryResponse> getMyHistory(String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found")) ;
+
+        // Repository'de daha önce yazdığımız "findByUser" metodunu kullanabiliriz
+        // Eğer yoksa BorrowingRepository'e ekle: List<Borrowing> findByUser(User user);
+        List<Borrowing> borrowings = borrowingRepository.findByUser(user);
+        
+        List<BorrowHistoryResponse> historyList = new ArrayList<>();
+
+        for (Borrowing b : borrowings) {
+            BorrowHistoryResponse dto = new BorrowHistoryResponse();
+            dto.setId(b.getId());
+            dto.setBookTitle(b.getBook().getTitle());
+            dto.setAuthor(b.getBook().getAuthor());
+            dto.setBorrowDate(b.getBorrowDate());
+            dto.setReturnDate(b.getReturnDate());
+            dto.setActualReturnDate(b.getActualReturnDate());
+            dto.setPenalty(b.getPenaltyAmount());
+            
+            // Kitap hala bendeyse ve tarih geçtiyse VEYA iade ettiysem ve ceza varsa "Gecikmiş" sayılır
+            boolean isLate = (b.getActualReturnDate() == null && LocalDate.now().isAfter(b.getReturnDate())) 
+                             || (b.getPenaltyAmount() != null && b.getPenaltyAmount() > 0);
+            
+            dto.setLate(isLate);
+            
+            historyList.add(dto);
+        }
+        
+        return historyList;
     }
 
 }
