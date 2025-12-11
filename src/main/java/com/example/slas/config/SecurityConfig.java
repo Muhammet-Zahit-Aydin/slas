@@ -35,6 +35,8 @@ public class SecurityConfig {
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(auth -> auth
             .requestMatchers("/api/auth/**").permitAll()
+            // Exception management
+            .requestMatchers("/error").permitAll()
             .requestMatchers("/api/users/test-auth").authenticated()
             .anyRequest().authenticated()
             ) ;
