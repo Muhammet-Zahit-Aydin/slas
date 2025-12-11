@@ -11,6 +11,7 @@ public class BookResponse {
     private String author ;
     private String isbn ;
     private Integer pageCount ;
+    private Integer stock ;
     private BookStatus status; 
 
 }

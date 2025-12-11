@@ -37,6 +37,13 @@ public class BorrowService {
         // Find book
         Book book = bookRepository.findById(request.getBookId()).orElseThrow(() -> new RuntimeException("Book not found")) ;
 
+        // Check stock
+        if (book.getStock() <= 0) {
+
+            throw new RuntimeException("This book is out of stock") ;
+        
+        }
+
         // Check if book is available
         if (book.getStatus() == BookStatus.BORROWED) {
 
@@ -53,31 +60,49 @@ public class BorrowService {
 
         borrowingRepository.save(borrowing) ;
 
-        // Update book status
-        book.setStatus(BookStatus.BORROWED) ;
+        // Decrease book stock
+        book.setStock(book.getStock() - 1) ;
+
+        // Update status if stock is 0
+        if (book.getStock() == 0) {
+            book.setStatus(BookStatus.BORROWED) ;
+        }
+
         bookRepository.save(book) ;
 
     }
 
     @Transactional
-    public void returnBook (ReturnRequest request) {
+    public void returnBook (ReturnRequest request , String userEmail) {
+
+        // Find user
+        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found")) ;
+
         // Find book
         Book book = bookRepository.findById(request.getBookId()).orElseThrow(() -> new RuntimeException("Book not found")); ;
 
         // Check if book is already available
         if (book.getStatus() == BookStatus.AVAILABLE) {
-            throw new RuntimeException("This book have never been borrowed");
+            throw new RuntimeException("This book have never been borrowed") ;
         }
 
         // Find related borrowing record
-        Borrowing borrowing = borrowingRepository.findByBookAndActualReturnDateIsNull(book)
-                .orElseThrow(() -> new RuntimeException("No active borrowing record found for this book")) ;
+        // Borrowing borrowing = borrowingRepository.findByUserAndBookAndActualReturnDateIsNull(user, book)
+        //         .orElseThrow(() -> new RuntimeException("There is no active borrowing record for this book")) ;
+
+        System.out.println("Sorgulaniyor -> User ID: " + user.getId() + " | Book ID: " + book.getId()) ;
+
+        Borrowing borrowing = borrowingRepository.findBorrowingByIds(user.getId(), book.getId())
+                .orElseThrow(() -> new RuntimeException("Sizde bu kitaba ait aktif bir ödünç kaydi yok! (ID eşleşmedi)")) ;
 
         // Make return date today
         borrowing.setActualReturnDate(LocalDate.now()) ;
         borrowingRepository.save(borrowing) ;
 
-        // Make book available again
+        // Increase book stock
+        book.setStock(book.getStock() + 1) ;
+        
+        // Update status
         book.setStatus(BookStatus.AVAILABLE) ;
         bookRepository.save(book) ;
 

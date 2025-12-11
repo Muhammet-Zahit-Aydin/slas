@@ -34,10 +34,15 @@ public class BorrowController {
     }
 
     @PutMapping("/return")
-    public ResponseEntity<String> returnBook (@RequestBody ReturnRequest request) {
+    public ResponseEntity<String> returnBook(@RequestBody ReturnRequest request) {
 
-        borrowService.returnBook(request) ;
-        return ResponseEntity.ok("Book has been returned successfully") ;
+        // Find user from token
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication() ;
+        String currentEmail = auth.getName() ;
+
+        borrowService.returnBook(request, currentEmail) ;
+        
+        return ResponseEntity.ok("Book returned successfully, uptaded stock") ; 
         
     }
 

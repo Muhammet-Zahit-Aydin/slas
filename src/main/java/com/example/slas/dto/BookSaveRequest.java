@@ -9,6 +9,7 @@ public class BookSaveRequest {
     private String author ;
     private String isbn ;
     private Integer pageCount ;
+    private Integer stock ;
     // Status will be set to AVAILABLE by default when saving a new book
 
 }

@@ -29,11 +29,38 @@
   "password": "bruhmoment"
 }
 
+{
+  "name": "Kemal Şamil",
+  "surname": "Ünal",
+  "email": "member2@kutuphane.com",
+  "password": "kemal123",
+  "role": "MEMBER"
+}
+
+{
+  "email": "member2@kutuphane.com",
+  "password": "kemal123"
+}
+
+{
+  "name": "Ali",
+  "surname": "Öztürk",
+  "email": "member3@kutuphane.com",
+  "password": "ali321",
+  "role": "MEMBER"
+}
+
+{
+  "email": "member3@kutuphane.com",
+  "password": "ali321"
+}
+
 ==========BOOKS==========
 
 {
-  "title": "Suç ve Ceza",
-  "author": "Dostoyevski",
-  "isbn": "978123456789",
-  "pageCount": 680
+  "title": "Harry Potter and Philosopher Stone",
+  "author": "J.K. Rowling",
+  "isbn": "9789750802942",
+  "pageCount": 276,
+  "stock": 2
 }

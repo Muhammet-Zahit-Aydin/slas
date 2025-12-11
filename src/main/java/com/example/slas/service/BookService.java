@@ -29,7 +29,8 @@ public class BookService {
         book.setAuthor(request.getAuthor()) ;
         book.setIsbn(request.getIsbn()) ;
         book.setPageCount(request.getPageCount()) ;
-        book.setStatus(BookStatus.AVAILABLE) ;
+        book.setStock(request.getStock()) ;
+        book.setStatus(request.getStock() > 0 ? BookStatus.AVAILABLE : BookStatus.BORROWED) ;
 
         Book savedBook = bookRepository.save(book) ;
         return mapToDto(savedBook) ;

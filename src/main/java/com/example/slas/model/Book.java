@@ -24,6 +24,9 @@ public class Book {
 
     private Integer pageCount;
 
+    @Column(nullable = false)
+    private Integer stock ;
+
     @Enumerated(EnumType.STRING)
     private BookStatus status ;
 
