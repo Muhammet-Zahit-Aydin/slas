@@ -34,11 +34,22 @@ public class SecurityConfig {
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/auth/**").permitAll()
-            // Exception management
-            .requestMatchers("/error").permitAll()
-            .requestMatchers("/api/users/test-auth").authenticated()
-            .anyRequest().authenticated()
+ 
+                .requestMatchers(
+                    "/api/auth/**",     // Login/Register
+                    "/v3/api-docs/**",  // Swagger JSON data
+                    "/swagger-ui/**",   // Swagger interface
+                    "/swagger-ui.html"  // Swagger guidance
+                ).permitAll()
+                
+                // Test endpoints
+                .requestMatchers("/api/users/test-auth").authenticated()
+                // Authentication endpoints
+                .requestMatchers("/api/auth/**").permitAll()
+                // Exception management
+                .requestMatchers("/error").permitAll()
+
+                .anyRequest().authenticated()
             ) ;
 
         return http.build() ;
