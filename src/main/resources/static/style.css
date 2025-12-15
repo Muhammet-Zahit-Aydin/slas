@@ -1,0 +1,270 @@
+/*    GENERAL SETTINGS    */
+body {
+
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif ;
+    background-color: #f0f2f5 ;
+    margin: 0 ;
+    padding: 0 ;
+    display: flex ;
+    flex-direction: column ;
+    min-height: 100vh ;
+
+}
+
+/*    LOGIN PAGE    */
+
+body:has(.login-container) {
+
+    justify-content: center ;
+    align-items: center ;
+}
+
+
+.login-container {
+
+    background: white ;
+    padding: 2rem ;
+    border-radius: 10px ;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1) ;
+    width: 350px ;
+    text-align: center ;
+}
+
+
+.form-group {
+
+    margin-bottom: 15px ;
+    text-align: left ;
+
+}
+
+label {
+
+    display: block ;
+    margin-bottom: 5px ;
+    font-weight: bold ;
+    color: #333 ;
+
+}
+
+input {
+
+    width: 100% ;
+    padding: 10px ;
+    border: 1px solid #ddd ;
+    border-radius: 5px ;
+    box-sizing: border-box ;
+
+}
+
+button {
+
+    width: 100% ;
+    padding: 10px ;
+    background-color: #007bff ;
+    color: white ;
+    border: none ;
+    border-radius: 5px ;
+    cursor: pointer ;
+    font-size: 16px ;
+    margin-top: 10px ;
+    transition: background-color 0.3s ;
+
+}
+
+button:hover {
+
+    background-color: #0056b3 ;
+    
+}
+
+button:disabled {
+
+    background-color: #ccc ;
+    cursor: not-allowed ;
+
+}
+
+.error {
+
+    color: red ;
+    margin-top: 10px ;
+    font-size: 14px ;
+
+}
+
+/*    NAVBAR & DASHBOARD    */
+
+.navbar {
+
+    background-color: #fff ;
+    padding: 15px 30px ;
+    display: flex ;
+    justify-content: space-between ;
+    align-items: center ;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1) ;
+
+}
+
+.logo {
+
+    font-size: 24px ;
+    font-weight: bold ;
+    color: #007bff ;
+
+}
+
+.user-email {
+
+    margin-right: 20px ;
+    font-weight: bold ;
+    color: #555 ;
+
+}
+
+.nav-btn {
+
+    text-decoration: none ;
+    color: #333 ;
+    margin-right: 15px ;
+    font-weight: 500 ;
+
+}
+
+.nav-btn:hover {
+
+    color: #007bff ;
+
+}
+
+.logout-btn {
+
+    background-color: #dc3545 ;
+    width: auto ;
+    margin-top: 0 ;
+    padding: 8px 15px ;
+
+}
+
+.logout-btn:hover {
+
+    background-color: #c82333 ;
+
+}
+
+/*    SEARCH BAR    */
+
+.container {
+    
+    max-width: 1200px ;
+    margin: 30px auto ;
+    padding: 0 20px ;
+
+}
+
+.search-section {
+
+    display: flex ;
+    gap: 10px ;
+    margin-bottom: 30px ;
+
+}
+
+.search-btn {
+
+    width: 150px ;
+    margin-top: 0 ;
+
+}
+
+/*    BOOK CARD (GRID)    */
+
+.book-grid {
+
+    display: grid ;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) ;
+    gap: 25px ;
+
+}
+
+.book-card {
+
+    background: white ;
+    padding: 20px ;
+    border-radius: 10px ;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05) ;
+    transition: transform 0.2s ;
+    display: flex ;
+    flex-direction: column ;
+    justify-content: space-between ;
+
+}
+
+.book-card:hover {
+
+    transform: translateY(-5px) ;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1) ;
+
+}
+
+.book-title {
+
+    font-size: 18px ;
+    font-weight: bold ;
+    margin-bottom: 5px ;
+    color: #333 ;
+
+}
+
+.book-author {
+
+    color: #777 ;
+    margin-bottom: 10px ;
+    font-style: italic ;
+
+}
+
+.stock-badge {
+
+    display: inline-block ;
+    padding: 4px 8px ;
+    border-radius: 4px ;
+    font-size: 12px ;
+    font-weight: bold ;
+    margin-bottom: 15px ;
+
+}
+
+.in-stock {
+    
+    background-color: #d4edda ;
+    color: #155724 ;
+
+}
+
+.out-of-stock {
+
+    background-color: #f8d7da ;
+    color: #721c24 ;
+
+}
+
+.borrow-btn {
+
+    background-color: #28a745 ;
+    margin-top: auto ;
+
+}
+
+.borrow-btn:hover {
+
+    background-color: #218838 ;
+
+}
+
+.borrow-btn:disabled {
+
+    background-color: #ccc ;
+    cursor: not-allowed ;
+
+}

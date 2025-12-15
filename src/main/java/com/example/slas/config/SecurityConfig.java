@@ -40,7 +40,13 @@ public class SecurityConfig {
                     "/api/books/search", // Book search
                     "/v3/api-docs/**",  // Swagger JSON data
                     "/swagger-ui/**",   // Swagger interface
-                    "/swagger-ui.html" // Swagger guidance
+                    "/swagger-ui.html", // Swagger guidance
+
+                    "/",                 // Ana dizin
+                    "/index.html",       // Varsayılan sayfa
+                    "/*.html",           // login.html, dashboard.html vs.
+                    "/*.css",            // style.css
+                    "/*.js"              // app.js
                 ).permitAll()
                 
                 // Test endpoints
