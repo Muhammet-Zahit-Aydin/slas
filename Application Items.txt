@@ -64,3 +64,11 @@
   "pageCount": 276,
   "stock": 2
 }
+
+{
+  "title": "The Lord Of The Rings",
+  "author": "J.R.R. Tolkien",
+  "isbn": "0923654235423",
+  "pageCount": 354,
+  "stock": 20
+}

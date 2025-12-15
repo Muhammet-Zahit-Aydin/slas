@@ -37,9 +37,10 @@ public class SecurityConfig {
  
                 .requestMatchers(
                     "/api/auth/**",     // Login/Register
+                    "/api/books/search", // Book search
                     "/v3/api-docs/**",  // Swagger JSON data
                     "/swagger-ui/**",   // Swagger interface
-                    "/swagger-ui.html"  // Swagger guidance
+                    "/swagger-ui.html" // Swagger guidance
                 ).permitAll()
                 
                 // Test endpoints

@@ -65,4 +65,24 @@ public class BookService {
         return response ;
         
     }
+
+    // Search Engine
+    public List<BookResponse> searchBooks (String keyword) {
+        List<Book> books ;
+        
+        // If search bar is empty get all
+        if (keyword == null || keyword.trim().isEmpty()) {
+
+            books = bookRepository.findAll() ;
+
+        } else {
+            
+            books = bookRepository.searchBooks(keyword.trim()) ;
+
+        }
+
+        // Turn entity list to dto
+        return books.stream().map(this::mapToDto).collect(Collectors.toList()) ;
+    }
+
 }

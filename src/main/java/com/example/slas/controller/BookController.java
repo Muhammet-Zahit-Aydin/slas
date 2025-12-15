@@ -44,5 +44,12 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response) ;
 
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<BookResponse>> searchBooks (@RequestParam(name = "query", required = false) String query) {
+
+        return ResponseEntity.ok(bookService.searchBooks(query)) ;
+        
+    }
     
 }
