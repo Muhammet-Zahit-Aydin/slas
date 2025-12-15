@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional ;
 
 import java.util.List ;
 import java.util.ArrayList ;
-import java.time.LocalDate ;
+import java.time.LocalDateTime;
 
 @Service
 public class BorrowService {
@@ -58,10 +58,10 @@ public class BorrowService {
         Borrowing borrowing = new Borrowing() ;
         borrowing.setUser(user) ;
         borrowing.setBook(book) ;
-        borrowing.setBorrowDate(LocalDate.now()) ;
-        borrowing.setReturnDate(LocalDate.now().plusDays(15)) ; // Due in 15 days
+        borrowing.setBorrowDate(LocalDateTime.now()) ;
+        borrowing.setReturnDate(LocalDateTime.now().plusMinutes(1)) ; // Due in 15 days
 
-        borrowingRepository.save(borrowing) ;
+        borrowingRepository.save(borrowing);
 
         // Decrease book stock
         book.setStock(book.getStock() - 1) ;
@@ -76,69 +76,78 @@ public class BorrowService {
     }
 
     @Transactional
-    public void returnBook (ReturnRequest request , String userEmail) {
-
+    public void returnBook (ReturnRequest request, String userEmail) {
+        System.out.println("RETURN PROCESS STARTED") ;
+        
         // Find user
-        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found")) ;
+        User user = userRepository.findByEmail(userEmail)
+                 .orElseThrow(() -> new RuntimeException("User not found")) ;
+        System.out.println("1. User has been found: " + user.getEmail() + " (ID: " + user.getId() + ")") ;
 
         // Find book
-        Book book = bookRepository.findById(request.getBookId()).orElseThrow(() -> new RuntimeException("Book not found")); ;
+        Book book = bookRepository.findById(request.getBookId())
+                .orElseThrow(() -> new RuntimeException("Book not found")) ;
+        System.out.println("2. Book has been found: " + book.getTitle() + " (ID: " + book.getId() + ")") ;
 
-        // Check if book is already available
-        if (book.getStatus() == BookStatus.AVAILABLE) {
-            throw new RuntimeException("This book have never been borrowed") ;
-        }
-
-        // Find related borrowing record
-        System.out.println("Sorgulaniyor -> User ID: " + user.getId() + " | Book ID: " + book.getId()) ;
-
-        Borrowing borrowing = borrowingRepository.findBorrowingByIds(user.getId(), book.getId())
-                .orElseThrow(() -> new RuntimeException("Sizde bu kitaba ait aktif bir ödünç kaydi yok! (ID eşleşmedi)")) ;
-
-        // Make return date today
-        borrowing.setActualReturnDate(LocalDate.now()) ;
-        borrowingRepository.save(borrowing) ;
-
-        // Increase book stock
-        book.setStock(book.getStock() + 1) ;
+        // Database control
+        System.out.println("3. Repository Query Running") ;
+        System.out.println("   Searched User ID: " + user.getId()) ;
+        System.out.println("   Searched Book ID: " + book.getId()) ;
         
-        // Update status
-        book.setStatus(BookStatus.AVAILABLE) ;
-        bookRepository.save(book) ;
+        // Error thrower
+        Borrowing borrowing = borrowingRepository.findBorrowingByIds(user.getId(), book.getId())
+                .orElseThrow(() -> {
+                    System.out.println("ERROR: Record not found") ;
+                    System.out.println("There is no record with this User ID, Book ID and actualReturnDate = null") ;
+                    return new RuntimeException("You don't have any record of borrowing this book") ;
+                }) ;
 
+        System.out.println("4. Borrowed Book ID: " + borrowing.getId()) ;
+        System.out.println("   Borrowing Date: " + borrowing.getBorrowDate()) ;
+
+        // 4. İade Tarihini İşle (Dakika hassasiyeti için LocalDateTime)
+        borrowing.setActualReturnDate(LocalDateTime.now()) ;
+        borrowingRepository.save(borrowing) ;
+        System.out.println("5. Return date saved") ;
+
+        // 5. Stok Güncelle
+        book.setStock(book.getStock() + 1) ;
+        book.setStatus(BookStatus.AVAILABLE) ;
+        bookRepository.save(book);
+        System.out.println("PROCESS SUCCESSFULLY FINISHED") ;
+        
     }
 
     // Kullanıcının ödünç geçmişini getirir
-    public List<BorrowHistoryResponse> getMyHistory(String userEmail) {
+    public List<BorrowHistoryResponse> getMyHistory (String userEmail) {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("User not found")) ;
 
-        // Repository'de daha önce yazdığımız "findByUser" metodunu kullanabiliriz
-        // Eğer yoksa BorrowingRepository'e ekle: List<Borrowing> findByUser(User user);
         List<Borrowing> borrowings = borrowingRepository.findByUser(user);
         
         List<BorrowHistoryResponse> historyList = new ArrayList<>();
 
         for (Borrowing b : borrowings) {
-            BorrowHistoryResponse dto = new BorrowHistoryResponse();
-            dto.setId(b.getId());
-            dto.setBookTitle(b.getBook().getTitle());
-            dto.setAuthor(b.getBook().getAuthor());
-            dto.setBorrowDate(b.getBorrowDate());
-            dto.setReturnDate(b.getReturnDate());
-            dto.setActualReturnDate(b.getActualReturnDate());
-            dto.setPenalty(b.getPenaltyAmount());
+            BorrowHistoryResponse dto = new BorrowHistoryResponse() ;
+            dto.setId(b.getId()) ;
+            dto.setBookTitle(b.getBook().getTitle()) ;
+            dto.setAuthor(b.getBook().getAuthor()) ;
+            dto.setBorrowDate(b.getBorrowDate()) ;
+            dto.setReturnDate(b.getReturnDate()) ;
+            dto.setActualReturnDate(b.getActualReturnDate()) ;
+            dto.setPenalty(b.getPenaltyAmount()) ;
             
-            // Kitap hala bendeyse ve tarih geçtiyse VEYA iade ettiysem ve ceza varsa "Gecikmiş" sayılır
-            boolean isLate = (b.getActualReturnDate() == null && LocalDate.now().isAfter(b.getReturnDate())) 
-                             || (b.getPenaltyAmount() != null && b.getPenaltyAmount() > 0);
+            // If the book is returned and there's a fine, book considered as late
+            boolean isLate = (b.getActualReturnDate() == null && LocalDateTime.now().isAfter(b.getReturnDate())) 
+                             || (b.getPenaltyAmount() != null && b.getPenaltyAmount() > 0) ;
             
-            dto.setLate(isLate);
+            dto.setLate(isLate) ;
             
-            historyList.add(dto);
+            historyList.add(dto) ;
         }
         
-        return historyList;
+        return historyList ;
+
     }
 
 }

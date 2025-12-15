@@ -1,7 +1,7 @@
 package com.example.slas.dto ;
 
 import lombok.Data ;
-import java.time.LocalDate ;
+import java.time.LocalDateTime ;
 
 @Data
 public class BorrowHistoryResponse {
@@ -9,9 +9,9 @@ public class BorrowHistoryResponse {
     private Long id ;
     private String bookTitle ;
     private String author ;
-    private LocalDate borrowDate ;
-    private LocalDate returnDate ;
-    private LocalDate actualReturnDate ; 
+    private LocalDateTime borrowDate ;
+    private LocalDateTime returnDate ;
+    private LocalDateTime actualReturnDate ; 
     private Double penalty ;
     private boolean isLate ;
 

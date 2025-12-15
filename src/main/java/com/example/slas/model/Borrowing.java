@@ -2,7 +2,8 @@ package com.example.slas.model ;
 
 import jakarta.persistence.* ;  
 import lombok.Data ;
-import java.time.LocalDate ;
+
+import java.time.LocalDateTime ; 
 
 @Entity
 @Table(name = "borrowings")
@@ -24,13 +25,13 @@ public class Borrowing {
     private Book book ;
 
     // When was the book borrowed?
-    private LocalDate borrowDate ;
+    private LocalDateTime borrowDate ;
 
     // When is the book due to be returned?
-    private LocalDate returnDate ;
+    private LocalDateTime returnDate ;
 
     // When was the book actually returned?
-    private LocalDate actualReturnDate ;
+    private LocalDateTime actualReturnDate ;
 
     // Fine ammount for late returns
     private Double penaltyAmount ;
