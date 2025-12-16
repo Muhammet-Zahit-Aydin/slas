@@ -34,6 +34,10 @@ public class BorrowService {
 
     @Transactional // If there's an error, rollback all operations
     public void borrowBook(BorrowRequest request, String userEmail) {
+
+        // CASUS KOD:
+        System.out.println("GELEN İSTEK -> ID: " + request.getBookId());
+        
         // Find user
         User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found")) ;
 
@@ -128,8 +132,10 @@ public class BorrowService {
         List<BorrowHistoryResponse> historyList = new ArrayList<>();
 
         for (Borrowing b : borrowings) {
+            
             BorrowHistoryResponse dto = new BorrowHistoryResponse() ;
             dto.setId(b.getId()) ;
+            dto.setBookId(b.getBook().getId());
             dto.setBookTitle(b.getBook().getTitle()) ;
             dto.setAuthor(b.getBook().getAuthor()) ;
             dto.setBorrowDate(b.getBorrowDate()) ;

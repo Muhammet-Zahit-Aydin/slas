@@ -33,7 +33,7 @@ public class BorrowController {
 
     }
 
-    @PostMapping
+    @PostMapping("/book")
     public ResponseEntity<String> borrowBook (@RequestBody BorrowRequest request) {
 
         // Take current user's email

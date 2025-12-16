@@ -12,7 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // If there is a tokane direct to dashboard
 
         if(localStorage.getItem('token')) {
+
             window.location.href = 'dashboard.html' ;
+            
         }
 
         loginForm.addEventListener('submit', async (e) => {
@@ -30,12 +32,15 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
 
                 const response = await fetch(`${API_BASE_URL}/auth/login`, {
+
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
+
                 }) ;
 
                 if (response.ok) {
+
                     // Take token and save it
                     const token = await response.text() ;
                     localStorage.setItem('token', token) ;
@@ -43,8 +48,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     // Direct to panel
                     window.location.href = 'dashboard.html' ;
+
                 } else {
+
                     errorMessage.innerText = "Login Failed. E-mail or password is incorrect" ;
+
                 }
 
             } catch (error) {
@@ -72,7 +80,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Print username
         const userEmailSpan = document.getElementById('userInfo') ;
         if(userEmailSpan) {
+
             userEmailSpan.innerText = localStorage.getItem('userEmail') ;
+
         }
 
         // Load books
@@ -100,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function checkAuth() {
 
     if(!localStorage.getItem('token')) {
+
         window.location.href = 'login.html' ;
 
     }
@@ -110,6 +121,7 @@ function checkAuth() {
 function logout() {
 
     if(confirm("Are you sure you want to log out?")) {
+
         localStorage.removeItem('token') ;
         localStorage.removeItem('userEmail') ;
         window.location.href = 'login.html' ;
@@ -140,10 +152,12 @@ async function loadBooks() {
         bookListDiv.innerHTML = '<p style="text-align:center;">Loading...</p>' ;
 
         const response = await fetch(`${API_BASE_URL}/books/search?query=${query}`, {
+
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${token}` // JWT Token'ı ekle
+                'Authorization': `Bearer ${token}` // Add JWT token
             }
+
         }) ;
 
         // If session time ran out (403 Forbidden)
@@ -161,16 +175,23 @@ async function loadBooks() {
             return ;
         }
 
-        // Put books in loop and make html
+        // Make Cards
         books.forEach(book => {
-
-            // Check if book is available
-            const isAvailable = book.status === 'AVAILABLE' && book.stock > 0 ;
             
+            // Stock count
+            const stockCount = book.stock != null ? book.stock : 0 ;
+
+            // Status
+            const statusString = book.status ? book.status.toString().toUpperCase() : "" ;
+
+            // Control
+            const isAvailable = (statusString === 'AVAILABLE') && (stockCount > 0) ;
+
+            // Visual Settings
             const statusClass = isAvailable ? 'in-stock' : 'out-of-stock' ;
-            const statusText = isAvailable ? `Current (Stock: ${book.stock})` : 'Out of stock' ;
+            const statusText = isAvailable ? `Current (Stock: ${stockCount})` : 'Out of Stock' ;
             const btnDisabled = !isAvailable ? 'disabled' : '' ;
-            const btnText = isAvailable ? 'Borrow' : 'Out of stock' ;
+            const btnText = isAvailable ? 'Borrow' : 'No Stock' ;
 
             const cardHTML = `
                 <div class="book-card">
@@ -200,6 +221,9 @@ async function loadBooks() {
 // Borrowing process
 async function borrowBook(bookId) {
 
+    //! FOR DEBUG
+    console.log("ÖDÜNÇ ALINMAK İSTENEN KİTAP ID:", bookId);
+
     if(!confirm("Are you sure you want to borrow this book?")) return ;
 
     const token = localStorage.getItem('token') ;
@@ -212,8 +236,8 @@ async function borrowBook(bookId) {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ bookId: bookId })
-        }) ;
+            body: JSON.stringify({ bookId: bookId }) 
+        });
 
         if (response.ok) {
 
@@ -237,6 +261,54 @@ async function borrowBook(bookId) {
 
         console.error("Borrowing Error:", error) ;
         alert("An error occured in process") ;
+
+    }
+
+}
+
+window.returnBook = async function(bookId) {
+
+    if(!confirm("Are you sure you want to return this book?")) return ;
+
+    const token = localStorage.getItem('token') ;
+
+    try {
+
+        console.log("İade İsteği Gönderiliyor. Kitap ID:", bookId) ; //! FOR DEBUG
+
+        const response = await fetch(`${API_BASE_URL}/borrow/return`, {
+
+            method: 'PUT',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ bookId: bookId })
+
+        }) ;
+
+        if(response.ok) {
+
+            alert("Return process successfull");
+            // Reload the page
+            if(typeof loadHistory === 'function') {
+                loadHistory() ; 
+            } else {
+                window.location.reload() ;
+            }
+
+        } else {
+
+            const errorText = await response.text() ;
+            console.error("Error Detail:", errorText) ;
+            alert("Error Occured: " + errorText) ;
+
+        }
+
+    } catch (error) {
+
+        console.error("Connection Error:", error) ;
+        alert("Could not connect to server") ;
 
     }
 

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">📚 Library System</div>
+        <div class="menu-items">
+
+            <a href="dashboard.html" class="nav-btn"><i class="fas fa-home"></i> Books</a>
+            <button onclick="logout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>📖 History & Penalties</h2>
+        
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Book Name</th>
+                    <th>Borrowing Date</th>
+                    <th>Return Date</th>
+                    <th>Return Status</th>
+                    <th>Fine (TL)</th>
+                    <th>Process</th>
+                </tr>
+            </thead>
+            <tbody id="historyList">
+                </tbody>
+        </table>
+        <p id="loadingText" style="text-align: center;">Loading...</p>
+    </div>
+
+    <script src="app.js"></script> <script>
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHistory() ;
+        }) ;
+
+        async function loadHistory() {
+
+            const token = localStorage.getItem('token') ;
+            const tbody = document.getElementById('historyList') ;
+            const loadingText = document.getElementById('loadingText') ;
+
+            try {
+
+                const response = await fetch('/api/borrow/my-history', {
+
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` }
+
+                }) ;
+
+                const data = await response.json() ;
+                loadingText.style.display = 'none' ;
+                tbody.innerHTML = "" ;
+
+                if(data.length === 0) {
+
+                    tbody.innerHTML = "<tr><td colspan='6' style='text-align:center;'>There is no process history</td></tr>";
+                    return ;
+
+                }
+
+                data.forEach(item => {
+
+                    // Fix dates
+                    const borrowDate = new Date(item.borrowDate).toLocaleString('tr-TR') ;
+                    const returnDate = new Date(item.returnDate).toLocaleString('tr-TR') ;
+                    
+                    // Fine control
+                    const penalty = item.penaltyAmount ? item.penaltyAmount : 0.0;
+
+                    // Status
+                    let statusHtml = "" ;
+                    let actionHtml = "" ;
+
+                    if(item.actualReturnDate) {
+
+                        statusHtml = `<span class="badge success">Returned</span>` ;
+                        actionHtml = `<span style="color:#aaa;">-</span>` ;
+
+                    } else {
+
+                        const now = new Date();
+                        const deadline = new Date(item.returnDate);
+                        
+                        if(now > deadline) {
+
+                            statusHtml = `<span class="badge danger">Late</span>` ;
+
+                        } else {
+
+                            statusHtml = `<span class="badge warning">In Use</span>` ;
+
+                        }
+                        
+                        // Book ID control
+                        actionHtml = `
+                            <button class="return-btn" onclick="returnBook(${item.bookId})">
+                                <i class="fas fa-undo"></i> Return
+                            </button>
+                        `;
+
+                    }
+
+                    const row = `
+                        <tr>
+                            <td><strong>${item.bookTitle}</strong></td>
+                            <td>${borrowDate}</td>
+                            <td>${returnDate}</td>
+                            <td>${statusHtml}</td>
+                            <td style="color: ${penalty > 0 ? 'red' : 'green'}; font-weight:bold;">
+                                ${penalty} TL
+                            </td>
+                            <td>${actionHtml}</td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+
+            } catch (error) {
+
+                console.error(error) ;
+                loadingText.innerText = "Data could not be loaded" ;
+
+            }
+
+        }
+
+    </script>
+
+    <style>
+
+        .history-table {
+
+            width: 100% ;
+            border-collapse: collapse ;
+            background: white ;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1) ;
+            border-radius: 8px ;
+            overflow: hidden ;
+
+        }
+
+        .history-table th, .history-table td {
+
+            padding: 15px ;
+            text-align: left ;
+            border-bottom: 1px solid #eee ;
+
+        }
+
+        .history-table th {
+
+            background-color: #f8f9fa ;
+            font-weight: bold ;
+            color: #555 ;
+
+        }
+
+        .badge {
+
+            padding: 5px 10p ;
+            border-radius: 15px ;
+            font-size: 12px ;
+            font-weight: bold ;
+
+        }
+
+        .success {
+            
+            background-color: #d4edda; color: #155724 ;
+        
+        }
+        .warning {
+            
+            background-color: #fff3cd; color: #856404 ;
+        
+        }
+        .danger {
+            
+            background-color: #f8d7da; color: #721c24 ;
+        
+        }
+
+        .return-btn {
+
+            background-color: #ffc107 ;
+            color: #333 ;
+            padding: 5px 10px ;
+            width: auto ;
+            font-size: 13px ;
+
+        }
+        .return-btn:hover {
+
+            background-color: #e0a800 ;
+        }
+
+    </style>
+
+</body>
+</html>

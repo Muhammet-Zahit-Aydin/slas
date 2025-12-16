@@ -61,9 +61,11 @@ public class BookService {
         response.setAuthor(book.getAuthor()) ;
         response.setIsbn(book.getIsbn()) ;
         response.setPageCount(book.getPageCount()) ;
-        response.setStatus(book.getStatus()) ;
-        return response ;
+        response.setStock(book.getStock()) ;
+        response.setStatus(book.getStatus()) ; 
         
+        return response ;
+
     }
 
     // Search Engine

@@ -7,6 +7,7 @@ import java.time.LocalDateTime ;
 public class BorrowHistoryResponse {
 
     private Long id ;
+    private Long bookId ;
     private String bookTitle ;
     private String author ;
     private LocalDateTime borrowDate ;
