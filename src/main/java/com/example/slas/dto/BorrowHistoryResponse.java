@@ -13,7 +13,7 @@ public class BorrowHistoryResponse {
     private LocalDateTime borrowDate ;
     private LocalDateTime returnDate ;
     private LocalDateTime actualReturnDate ; 
-    private Double penalty ;
+    private Double penaltyAmount ;
     private boolean isLate ;
 
 }

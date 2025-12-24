@@ -42,9 +42,9 @@ public class SecurityConfig {
                     "/swagger-ui/**",   // Swagger interface
                     "/swagger-ui.html", // Swagger guidance
 
-                    "/",                 // Ana dizin
-                    "/index.html",       // Varsayılan sayfa
-                    "/*.html",           // login.html, dashboard.html vs.
+                    "/",                 // Main
+                    "/index.html",       // Default page
+                    "/*.html",           // login.html, dashboard.html etc.
                     "/*.css",            // style.css
                     "/*.js"              // app.js
                 ).permitAll()

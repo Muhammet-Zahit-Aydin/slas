@@ -141,7 +141,7 @@ public class BorrowService {
             dto.setBorrowDate(b.getBorrowDate()) ;
             dto.setReturnDate(b.getReturnDate()) ;
             dto.setActualReturnDate(b.getActualReturnDate()) ;
-            dto.setPenalty(b.getPenaltyAmount()) ;
+            dto.setPenaltyAmount(b.getPenaltyAmount()) ;
             
             // If the book is returned and there's a fine, book considered as late
             boolean isLate = (b.getActualReturnDate() == null && LocalDateTime.now().isAfter(b.getReturnDate())) 
