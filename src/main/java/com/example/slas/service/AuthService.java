@@ -19,12 +19,15 @@ public class AuthService {
     private final AuthenticationManager authenticationManager ;
     private final JwtService jwtService ;
 
-    public AuthService (UserRepository userRepository , PasswordEncoder passwordEncoder ,AuthenticationManager authenticationManager , JwtService jwtService) {
+    private final EmailService emailService ;
+
+    public AuthService (UserRepository userRepository , PasswordEncoder passwordEncoder ,AuthenticationManager authenticationManager , JwtService jwtService , EmailService emailService) {
 
         this.userRepository = userRepository ;
         this.passwordEncoder = passwordEncoder ;
         this.authenticationManager = authenticationManager ;
         this.jwtService = jwtService ;
+        this.emailService = emailService ;
 
     }
 
@@ -50,7 +53,17 @@ public class AuthService {
         // Save the user to database
         userRepository.save(user) ;
 
-        return "User successfully registered." ;
+        String code = String.valueOf((int)(Math.random() * 9000) + 1000); 
+        
+        emailService.sendEmail(
+
+            request.getEmail(),
+            "Library Registiration Approval",
+            "Welcome " + request.getName() + "!\n\nRegister process successfull\nValidation Code: " + code
+
+        ) ;
+
+        return "User successfully registered" ;
 
     }
 
