@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profilim</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .stat-card i {
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: #764ba2;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">📚 Library System</div>
+        <div class="menu-items">
+            <a href="dashboard.html" class="nav-btn"><i class="fas fa-home"></i> Books</a>
+            <a href="history.html" class="nav-btn"><i class="fas fa-history"></i> History</a>
+            <button onclick="logout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Exit</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="profile-header">
+            <i class="fas fa-user-circle fa-4x"></i>
+            <h2 id="userName">Loading...</h2>
+            <p id="userEmail">...</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-book-reader"></i>
+                <h3>Total Read</h3>
+                <div class="stat-number" id="totalRead">0</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-book-open"></i>
+                <h3>Elindeki Kitaplar</h3>
+                <div class="stat-number" id="activeBooks">0</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-money-bill-wave"></i>
+                <h3>Total Penalty</h3>
+                <div class="stat-number" style="color:red" id="totalPenalty">0 TL</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', loadProfile);
+
+        async function loadProfile() {
+            const token = localStorage.getItem('token');
+            if(!token) window.location.href = 'index.html';
+
+            try {
+                const response = await fetch('/api/users/profile', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if(response.ok) {
+                    const data = await response.json();
+                    
+                    document.getElementById('userName').innerText = data.fullName;
+                    document.getElementById('userEmail').innerText = data.email;
+                    document.getElementById('totalRead').innerText = data.totalBooksRead;
+                    document.getElementById('activeBooks').innerText = data.activeBooks;
+                    document.getElementById('totalPenalty').innerText = data.totalPenalty + " TL";
+                }
+            } catch (error) {
+                console.error("Couldn't load profile", error);
+            }
+        }
+    </script>
+</body>
+</html>

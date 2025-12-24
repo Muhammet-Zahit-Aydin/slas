@@ -18,10 +18,16 @@ public interface BorrowingRepository extends JpaRepository<Borrowing, Long> {
     // SQL Version: SELECT * FROM borrowings WHERE book_id = ? AND actual_return_date IS NULL
     Optional<Borrowing> findByBookAndActualReturnDateIsNull(Book book) ;
 
-    // Get both book ID and user ID
-    // Optional<Borrowing> findByUserAndBookAndActualReturnDateIsNull(User user, Book book) ;
-
     @Query("SELECT b FROM Borrowing b WHERE b.user.id = :userId AND b.book.id = :bookId AND b.actualReturnDate IS NULL")
     Optional<Borrowing> findBorrowingByIds(@Param("userId") Long userId, @Param("bookId") Long bookId) ;
+
+    @Query("SELECT COUNT(b) FROM Borrowing b WHERE b.user.id = :userId")
+    int countTotalBooks(Long userId);
+
+    @Query("SELECT COUNT(b) FROM Borrowing b WHERE b.user.id = :userId AND b.actualReturnDate IS NULL")
+    int countActiveBooks(Long userId);
+
+    @Query("SELECT COALESCE(SUM(b.penaltyAmount), 0) FROM Borrowing b WHERE b.user.id = :userId")
+    Double sumTotalPenalty(Long userId);
 
 }

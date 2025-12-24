@@ -1,6 +1,10 @@
 package com.example.slas.controller ;
 
+import com.example.slas.dto.UserProfileResponse;
 import com.example.slas.dto.UserResponse ;
+import com.example.slas.model.User ;
+import com.example.slas.repository.UserRepository ;
+import com.example.slas.repository.BorrowingRepository ;
 import com.example.slas.service.UserService ;
 import org.springframework.http.ResponseEntity ;
 import org.springframework.security.core.Authentication ;
@@ -17,10 +21,14 @@ import java.util.HashMap ;
 public class UserController {
 
     private final UserService userService ;
+    private final UserRepository userRepository;
+    private final BorrowingRepository borrowingRepository;
 
-    public UserController (UserService userService) {
+    public UserController (UserService userService , UserRepository userRepository , BorrowingRepository borrowingRepository) {
 
         this.userService = userService ;
+        this.userRepository = userRepository ;
+        this.borrowingRepository = borrowingRepository ;
 
     }
 
@@ -43,6 +51,28 @@ public class UserController {
         String currentEmail = auth.getName() ; // Gives email in token
         
         return ResponseEntity.ok(userService.getUserByEmail(currentEmail)) ;
+
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<UserProfileResponse> getProfile(Authentication auth) {
+
+        // Find logged in user
+        User user = userRepository.findByEmail(auth.getName()).orElseThrow() ;
+
+        // Calculate statistics
+        int totalRead = borrowingRepository.countTotalBooks(user.getId());
+        int active = borrowingRepository.countActiveBooks(user.getId());
+        Double penalty = borrowingRepository.sumTotalPenalty(user.getId());
+
+        UserProfileResponse response = new UserProfileResponse();
+        response.setFullName(user.getName() + " " + user.getSurname()) ;
+        response.setEmail(user.getEmail()) ;
+        response.setTotalBooksRead(totalRead) ;
+        response.setActiveBooks(active) ;
+        response.setTotalPenalty(penalty) ;
+
+        return ResponseEntity.ok(response) ;
 
     }
     
