@@ -1,7 +1,7 @@
 package com.example.slas.service ;
 
+import com.example.slas.dto.AddBookRequest;
 import com.example.slas.dto.BookResponse ;
-import com.example.slas.dto.BookSaveRequest ;
 import com.example.slas.model.Book ;
 import com.example.slas.enums.BookStatus ;
 import com.example.slas.repository.BookRepository ;
@@ -21,8 +21,8 @@ public class BookService {
 
     }
 
-    // Add new book
-    public BookResponse createBook (BookSaveRequest request) {
+    // Add Book
+    public void addBook(AddBookRequest request) {
 
         Book book = new Book() ;
         book.setTitle(request.getTitle()) ;
@@ -30,10 +30,19 @@ public class BookService {
         book.setIsbn(request.getIsbn()) ;
         book.setPageCount(request.getPageCount()) ;
         book.setStock(request.getStock()) ;
-        book.setStatus(request.getStock() > 0 ? BookStatus.AVAILABLE : BookStatus.BORROWED) ;
+        book.setStatus(BookStatus.AVAILABLE) ;
 
-        Book savedBook = bookRepository.save(book) ;
-        return mapToDto(savedBook) ;
+        bookRepository.save(book) ;
+    }
+
+    // Delete Book
+    public void deleteBook(Long id) {
+        
+        if(bookRepository.existsById(id)) {
+            bookRepository.deleteById(id) ;
+        } else {
+            throw new RuntimeException("Book not found") ;
+        }
 
     }
 

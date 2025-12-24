@@ -40,15 +40,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }) ;
 
                 if (response.ok) {
+                    const data = await response.json();
 
-                    // Take token and save it
-                    const token = await response.text() ;
-                    localStorage.setItem('token', token) ;
-                    localStorage.setItem('userEmail', email) ;
+                    localStorage.setItem('token', data.token);
+                    
+                    localStorage.setItem('userRole', data.role); 
 
-                    // Direct to panel
-                    window.location.href = 'dashboard.html' ;
-
+                    window.location.href = 'dashboard.html';
                 } else {
 
                     errorMessage.innerText = "Login Failed. E-mail or password is incorrect" ;
@@ -312,4 +310,46 @@ window.returnBook = async function(bookId) {
 
     }
 
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    checkAdminAccess();
+});
+
+function checkAdminAccess() {
+
+    let role = localStorage.getItem('userRole');
+    
+    console.log("Ham Rol Verisi:", role); //! DEBUG
+
+    if (!role) return;
+
+    role = role.toUpperCase(); 
+
+    const menuItems = document.querySelector('.menu-items');
+    
+    if (!menuItems) {
+        console.error("ERROR: there's no div having '.menu-items' class check dashboard.html");
+        return;
+    }
+
+    if (role === 'ADMIN') {
+        console.log("Adding Button...");
+
+        if (document.querySelector('.admin-badge')) return;
+
+        const adminLink = document.createElement('a');
+        adminLink.href = 'admin.html';
+        adminLink.className = 'nav-btn admin-badge';
+        adminLink.innerHTML = '<i class="fas fa-user-shield"></i> Admin Panel';
+        
+        adminLink.style.backgroundColor = '#dc3545';
+        adminLink.style.color = 'white';
+        adminLink.style.border = '1px solid #dc3545';
+        adminLink.style.marginRight = '10px';
+
+        menuItems.insertBefore(adminLink, menuItems.firstChild);
+    } else {
+        console.log("User is not an admin");
+    }
 }

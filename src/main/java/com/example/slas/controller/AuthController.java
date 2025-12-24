@@ -1,5 +1,6 @@
 package com.example.slas.controller ;
 
+import com.example.slas.dto.AuthResponse;
 import com.example.slas.dto.LoginRequest;
 import com.example.slas.dto.RegisterRequest ;
 import com.example.slas.service.AuthService ;
@@ -27,9 +28,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login (@RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
 
-        return authService.login(request) ;
+        return ResponseEntity.ok(authService.login(request)) ;
 
     }
 

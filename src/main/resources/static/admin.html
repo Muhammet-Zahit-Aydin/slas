@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Paneli</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Admin Sayfasına Özel Stiller */
+        .admin-container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        /* Ekleme Formu */
+        .add-book-form {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* İki sütunlu yapı */
+            gap: 15px;
+        }
+
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-weight: bold; margin-bottom: 5px; color: #555; }
+        .form-group input { padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+
+        .full-width { grid-column: span 2; } /* Buton tüm genişliği kaplasın */
+
+        .add-btn {
+            background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .add-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3); }
+
+        /* Silme Tablosu */
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .delete-btn:hover { background-color: #c82333; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">AdminPanel</div>
+        <div class="menu-items">
+            <a href="dashboard.html" class="nav-btn"><i class="fas fa-home"></i> Dashboard</a>
+            <button onclick="logout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Exit</button>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        
+        <h2 style="margin-bottom: 15px;">Add a New Book</h2>
+        <form id="addBookForm" class="add-book-form" onsubmit="handleAddBook(event)">
+            <div class="form-group">
+                <label>Book Name</label>
+                <input type="text" id="title" required placeholder="Ex: Les Miserables">
+            </div>
+            <div class="form-group">
+                <label>Author</label>
+                <input type="text" id="author" required placeholder="Ex: Victor Hugo">
+            </div>
+            <div class="form-group">
+                <label>ISBN</label>
+                <input type="text" id="isbn" required placeholder="Ex: 978-123456">
+            </div>
+            <div class="form-group">
+                <label>Page Count</label>
+                <input type="number" id="pageCount" required placeholder="Ex: 150">
+            </div>
+            <div class="form-group">
+                <label>Stock Count</label>
+                <input type="number" id="stock" required placeholder="Ex: 10">
+            </div>
+            
+            <button type="submit" class="add-btn full-width">Save Book To System</button>
+        </form>
+
+        <h2 style="margin-bottom: 15px;">📚 Current Books & Administration</h2>
+        <table class="history-table"> <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Book Name</th>
+                    <th>Author</th>
+                    <th>Stock</th>
+                    <th>Process</th>
+                </tr>
+            </thead>
+            <tbody id="adminBookList">
+                </tbody>
+        </table>
+
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', loadAdminBooks);
+
+        async function loadAdminBooks() {
+            const token = localStorage.getItem('token');
+            const tbody = document.getElementById('adminBookList');
+            
+            try {
+                const response = await fetch('/api/books', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const books = await response.json();
+                
+                tbody.innerHTML = "";
+                books.forEach(book => {
+                    const row = `
+                        <tr>
+                            <td>${book.id}</td>
+                            <td>${book.title}</td>
+                            <td>${book.author}</td>
+                            <td>${book.stock || book.stockAmount || 0}</td>
+                            <td>
+                                <button class="delete-btn" onclick="deleteBook(${book.id})">
+                                    <i class="fas fa-trash"></i> Sil
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+            } catch (error) {
+                console.error("Books couldn't load", error);
+            }
+        }
+
+        // 2. YENİ KİTAP EKLEME
+        async function handleAddBook(event) {
+            event.preventDefault();
+
+            const token = localStorage.getItem('token');
+            
+            const newBook = {
+                title: document.getElementById('title').value,
+                author: document.getElementById('author').value,
+                isbn: document.getElementById('isbn').value,
+                pageCount: parseInt(document.getElementById('pageCount').value),
+                stock: parseInt(document.getElementById('stock').value)
+            };
+
+            try {
+                const response = await fetch('/api/books/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(newBook)
+                });
+
+                if(response.ok) {
+                    alert("Book Succesfully added");
+                    document.getElementById('addBookForm').reset();
+                    loadAdminBooks();
+                } else {
+                    alert("Error Occured: " + await response.text());
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Server Error");
+            }
+        }
+
+        async function deleteBook(id) {
+            if(!confirm("Do you want to delete this book?")) return;
+
+            const token = localStorage.getItem('token') ;
+
+            try {
+                const response = await fetch(`/api/books/delete/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if(response.ok) {
+                    alert("Kitap silindi.") ;
+                    loadAdminBooks() ;
+                } else {
+                    alert("Couldn't delete the book. Maybe its borrowed");
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>

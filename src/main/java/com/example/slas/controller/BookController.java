@@ -1,11 +1,9 @@
 package com.example.slas.controller ;
 
+import com.example.slas.dto.AddBookRequest;
 import com.example.slas.dto.BookResponse ;
-import com.example.slas.dto.BookSaveRequest ;
 import com.example.slas.service.BookService ;
-import org.springframework.http.HttpStatus ;
 import org.springframework.http.ResponseEntity ;
-import org.springframework.security.access.prepost.PreAuthorize ;
 import org.springframework.web.bind.annotation.* ;
 
 import java.util.List ;
@@ -36,20 +34,27 @@ public class BookController {
 
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping
-    public ResponseEntity<BookResponse> saveBook (@RequestBody BookSaveRequest request) {
-        
-        BookResponse response = bookService.createBook(request) ;
-        return ResponseEntity.status(HttpStatus.CREATED).body(response) ;
-
-    }
-
     @GetMapping("/search")
     public ResponseEntity<List<BookResponse>> searchBooks (@RequestParam(name = "query", required = false) String query) {
 
         return ResponseEntity.ok(bookService.searchBooks(query)) ;
         
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<String> addBook(@RequestBody AddBookRequest request) {
+
+        bookService.addBook(request) ;
+        return ResponseEntity.ok("Book successfully added") ;
+        
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteBook(@PathVariable Long id) {
+
+        bookService.deleteBook(id) ;
+        return ResponseEntity.ok("Book succcessfully deleted") ;
+
     }
     
 }

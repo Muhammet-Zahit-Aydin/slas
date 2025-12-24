@@ -1,6 +1,7 @@
 package com.example.slas.service ;
 
 import com.example.slas.dto.RegisterRequest ;
+import com.example.slas.dto.AuthResponse ;
 import com.example.slas.model.User ;
 import com.example.slas.repository.UserRepository ;
 import org.springframework.security.crypto.password.PasswordEncoder ;
@@ -53,12 +54,25 @@ public class AuthService {
 
     }
 
-    public String login (LoginRequest request) {
+    public AuthResponse login(LoginRequest request) {
 
-        // Spring Security checking password
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail() , request.getPassword())) ;
+        authenticationManager.authenticate(
 
-        return jwtService.generateToken(request.getEmail()) ;
+            new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+
+        ) ;
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found")) ;
+
+        String jwtToken = jwtService.generateToken(request.getEmail());
+
+        return new AuthResponse(
+
+            jwtToken , user.getRole().name() 
+
+        ) ;
+        
     }
 
 }
