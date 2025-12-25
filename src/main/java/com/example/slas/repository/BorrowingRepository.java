@@ -34,4 +34,7 @@ public interface BorrowingRepository extends JpaRepository<Borrowing, Long> {
     @Query("SELECT b FROM Borrowing b WHERE b.returnDate < :now AND b.actualReturnDate IS NULL")
     List<Borrowing> findOverdueBooks(LocalDateTime now) ;
 
+    @Query("SELECT b FROM Borrowing b WHERE b.user.id = :userId AND b.penaltyAmount > 0")
+    List<Borrowing> findAllDebtsByUserId(Long userId) ;
+
 }

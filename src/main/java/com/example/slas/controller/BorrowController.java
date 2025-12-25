@@ -59,4 +59,12 @@ public class BorrowController {
         
     }
 
+    @PostMapping("/pay-debts")
+    public ResponseEntity<String> payDebts(Authentication authentication) {
+
+        borrowService.payAllDebts(authentication.getName()) ;
+        return ResponseEntity.ok("Process Successfull") ;
+        
+    }
+
 }

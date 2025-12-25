@@ -156,4 +156,20 @@ public class BorrowService {
 
     }
 
+    @Transactional
+    public void payAllDebts(String userEmail) {
+
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found")) ;
+
+        List<Borrowing> debts = borrowingRepository.findAllDebtsByUserId(user.getId()) ;
+
+        for (Borrowing borrowing : debts) {
+            borrowing.setPenaltyAmount(0.0) ;
+        }
+
+        borrowingRepository.saveAll(debts) ;
+
+    }
+
 }
