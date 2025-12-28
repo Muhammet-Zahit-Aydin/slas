@@ -26,22 +26,23 @@
     </nav>
 
     <div class="filter-container">
-    <div class="search-box">
-        <i class="fas fa-search"></i>
-        <input type="text" id="searchInput" placeholder="Kitap adı veya yazar ara..." onkeyup="filterBooks()">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Kitap veya yazar ara..." onkeyup="filterBooks()">
+        </div>
     </div>
-    
-    <div class="filter-option">
-        <select id="categoryFilter" onchange="filterBooks()" style="padding: 10px; border-radius: 20px; border: 1px solid #ddd; cursor:pointer;">
-            <option value="all">All</option>
-            <option value="Novel">Novel</option>
-            <option value="Fantasy">Fantasy</option>
-            <option value="Sci-Fi">Sci-Fi</option>
-            <option value="History">History</option>
-            <option value="Philosophy">Philosophy</option>
-            <option value="Children">Children</option>
-        </select>
+
+    <div class="category-nav">
+        <button class="cat-btn active" onclick="setCategory('all', this)">All</button>
+        <button class="cat-btn" onclick="setCategory('Fantasy', this)">Fantasy</button>
+        <button class="cat-btn" onclick="setCategory('Novel', this)">Novel</button>
+        <button class="cat-btn" onclick="setCategory('Sci-Fi', this)">Sci-Fi</button>
+        <button class="cat-btn" onclick="setCategory('History', this)">History</button>
+        <button class="cat-btn" onclick="setCategory('Philosophy', this)">Philosophy</button>
+        <button class="cat-btn" onclick="setCategory('Children', this)">Children</button>
     </div>
+
+<div id="bookList" class="book-grid"></div>
 
     <div id="bookList" class="book-grid">
     </div>

@@ -136,6 +136,7 @@ function searchBooks() {
 
 // Global variable
 let allBooksData = []; 
+let currentCategory = 'all';
 
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('bookList')) {
@@ -204,21 +205,35 @@ function renderBooks(booksToRender) {
     });
 }
 
+function setCategory(category, btnElement) {
+
+    currentCategory = category;
+
+    document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+
+    btnElement.classList.add('active');
+
+    filterBooks();
+}
+
 // Filtering function
 function filterBooks() {
-
-    const searchText = document.getElementById('searchInput') ? document.getElementById('searchInput').value.toLowerCase() : "";
+    const searchInput = document.getElementById('searchInput');
+    const searchText = searchInput ? searchInput.value.toLowerCase() : "";
     
-    const categorySelect = document.getElementById('categoryFilter');
-    const selectedCategory = categorySelect ? categorySelect.value : "all";
+    const selectedCategory = currentCategory; 
 
     const filteredList = allBooksData.filter(book => {
-        // Check search
-        const matchesSearch = book.title.toLowerCase().includes(searchText) || 
-                              book.author.toLowerCase().includes(searchText);
+        const title = book.title ? book.title.toLowerCase() : "";
+        const author = book.author ? book.author.toLowerCase() : "";
+        
+        const category = book.category ? book.category : "All"; 
 
-        // Check category
-        const matchesCategory = (selectedCategory === "all") || (book.category === selectedCategory);
+        // Search Control
+        const matchesSearch = title.includes(searchText) || author.includes(searchText);
+
+        // Category Control
+        const matchesCategory = (selectedCategory === "all") || (category === selectedCategory);
 
         return matchesSearch && matchesCategory;
     });
