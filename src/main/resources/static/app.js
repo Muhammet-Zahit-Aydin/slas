@@ -155,7 +155,6 @@ async function loadBooks() {
     }
 
     try {
-        // İsteği atarken BAŞLIK (Header) ekliyoruz
         const response = await fetch('/api/books', {
             headers: { 
                 'Authorization': `Bearer ${token}`,
