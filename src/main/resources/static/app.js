@@ -134,86 +134,96 @@ function searchBooks() {
 
 }
 
-// Get books from backend and list
+// Global variable
+let allBooksData = []; 
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('bookList')) {
+        loadBooks();
+    }
+});
+
+// Loads books from database
 async function loadBooks() {
+    const token = localStorage.getItem('token');
 
-    const searchInput = document.getElementById('searchInput') ;
-    const query = searchInput ? searchInput.value : "" ;
-    const token = localStorage.getItem('token') ;
-    const bookListDiv = document.getElementById('bookList') ;
-
-    // If there's no token don't process
-    if(!token) return ;
+    if (!token) {
+        window.location.href = 'login.html';
+        return;
+    }
 
     try {
-
-        bookListDiv.innerHTML = '<p style="text-align:center;">Loading...</p>' ;
-
-        const response = await fetch(`${API_BASE_URL}/books/search?query=${query}`, {
-
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}` // Add JWT token
+        // İsteği atarken BAŞLIK (Header) ekliyoruz
+        const response = await fetch('/api/books', {
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
             }
+        });
 
-        }) ;
-
-        // If session time ran out (403 Forbidden)
-        if (response.status === 403) {
-            alert("Your session time ran out please login again") ;
-            logout() ;
-            return ;
+        if (response.ok) {
+            allBooksData = await response.json();
+            renderBooks(allBooksData);
+        } else {
+            console.error("Authorization or Server Error:", response.status);
         }
-
-        const books = await response.json() ;
-        bookListDiv.innerHTML = ""; // Clear list
-
-        if (books.length === 0) {
-            bookListDiv.innerHTML = "<p style='text-align:center; width:100%;'>Searched book couldn't found</p>" ;
-            return ;
-        }
-
-        // Make Cards
-        books.forEach(book => {
-            
-            // Stock count
-            const stockCount = book.stock != null ? book.stock : 0 ;
-
-            // Status
-            const statusString = book.status ? book.status.toString().toUpperCase() : "" ;
-
-            // Control
-            const isAvailable = (statusString === 'AVAILABLE') && (stockCount > 0) ;
-
-            // Visual Settings
-            const statusClass = isAvailable ? 'in-stock' : 'out-of-stock' ;
-            const statusText = isAvailable ? `Current (Stock: ${stockCount})` : 'Out of Stock' ;
-            const btnDisabled = !isAvailable ? 'disabled' : '' ;
-            const btnText = isAvailable ? 'Borrow' : 'No Stock' ;
-
-            const cardHTML = `
-                <div class="book-card">
-                    <div>
-                        <div class="book-title">${book.title}</div>
-                        <div class="book-author">${book.author}</div>
-                        <div class="stock-badge ${statusClass}">${statusText}</div>
-                        <small style="color:#999;">ISBN: ${book.isbn}</small>
-                    </div>
-                    <button class="borrow-btn" ${btnDisabled} onclick="borrowBook(${book.id})">
-                        ${btnText}
-                    </button>
-                </div>
-            `;
-            bookListDiv.innerHTML += cardHTML ;
-
-        }) ;
-
     } catch (error) {
-
-        console.error("Hata:", error) ;
-        bookListDiv.innerHTML = "<p style='color:red; text-align:center;'>An error occured while loading the books</p>" ;
-
+        console.error("Connection Error:", error);
     }
+}
+
+function renderBooks(booksToRender) {
+    const bookList = document.getElementById('bookList');
+    bookList.innerHTML = '';
+
+    if (booksToRender.length === 0) {
+        bookList.innerHTML = '<p style="text-align:center; color:#888;">Filtered book couldnt found</p>';
+        return;
+    }
+
+    booksToRender.forEach(book => {
+
+        const categoryBadge = book.category ? `<span class="badge">${book.category}</span>` : '';
+
+        const bookCard = `
+            <div class="book-card">
+                <div class="card-header">
+                    <h3>${book.title}</h3>
+                    ${categoryBadge}
+                </div>
+                <p><strong>Author:</strong> ${book.author}</p>
+                <p><strong>Stock:</strong> ${book.stock}</p>
+                
+                ${book.stock > 0 
+                    ? `<button onclick="borrowBook(${book.id})" class="nav-btn" style="background:#28a745; width:100%; margin-top:10px;">Borrow</button>` 
+                    : `<button disabled style="background:#ccc; width:100%; margin-top:10px; border:none; color:white; padding:10px;">Out of Stock</button>`
+                }
+            </div>
+        `;
+        bookList.innerHTML += bookCard;
+    });
+}
+
+// Filtering function
+function filterBooks() {
+
+    const searchText = document.getElementById('searchInput') ? document.getElementById('searchInput').value.toLowerCase() : "";
+    
+    const categorySelect = document.getElementById('categoryFilter');
+    const selectedCategory = categorySelect ? categorySelect.value : "all";
+
+    const filteredList = allBooksData.filter(book => {
+        // Check search
+        const matchesSearch = book.title.toLowerCase().includes(searchText) || 
+                              book.author.toLowerCase().includes(searchText);
+
+        // Check category
+        const matchesCategory = (selectedCategory === "all") || (book.category === selectedCategory);
+
+        return matchesSearch && matchesCategory;
+    });
+
+    renderBooks(filteredList);
 }
 
 // Borrowing process

@@ -10,5 +10,6 @@ public class AddBookRequest {
     private String isbn ;
     private Integer pageCount ;
     private Integer stock ;
+    private String category ;
 
 }

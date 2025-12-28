@@ -25,22 +25,28 @@
 
     </nav>
 
-    <div class="container">
-        
-        <div class="search-section">
-
-            <input type="text" id="searchInput" placeholder="Search book name, author or ISBN...">
-            <button onclick="searchBooks()" class="search-btn"><i class="fas fa-search"></i> Search</button>
-
-        </div>
-
-        <div id="bookList" class="book-grid">
-
-            <p style="text-align: center; width: 100%;">Loading Books...</p>
-
-        </div>
-
+    <div class="filter-container">
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Kitap adı veya yazar ara..." onkeyup="filterBooks()">
     </div>
+    
+    <div class="filter-option">
+        <select id="categoryFilter" onchange="filterBooks()" style="padding: 10px; border-radius: 20px; border: 1px solid #ddd; cursor:pointer;">
+            <option value="all">All</option>
+            <option value="Novel">Novel</option>
+            <option value="Fantasy">Fantasy</option>
+            <option value="Sci-Fi">Sci-Fi</option>
+            <option value="History">History</option>
+            <option value="Philosophy">Philosophy</option>
+            <option value="Children">Children</option>
+        </select>
+    </div>
+
+    <div id="bookList" class="book-grid">
+    </div>
+
+</div>
 
     <script src="app.js"></script>
 

@@ -109,12 +109,12 @@ public class BorrowService {
         System.out.println("4. Borrowed Book ID: " + borrowing.getId()) ;
         System.out.println("   Borrowing Date: " + borrowing.getBorrowDate()) ;
 
-        // 4. İade Tarihini İşle (Dakika hassasiyeti için LocalDateTime)
+        // Calculate return date
         borrowing.setActualReturnDate(LocalDateTime.now()) ;
         borrowingRepository.save(borrowing) ;
         System.out.println("5. Return date saved") ;
 
-        // 5. Stok Güncelle
+        // Update stock
         book.setStock(book.getStock() + 1) ;
         book.setStatus(BookStatus.AVAILABLE) ;
         bookRepository.save(book);

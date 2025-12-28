@@ -30,4 +30,7 @@ public class Book {
     @Enumerated(EnumType.STRING)
     private BookStatus status ;
 
+    @Column(nullable = false)
+    private String category ;
+
 }

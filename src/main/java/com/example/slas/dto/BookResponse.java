@@ -13,5 +13,6 @@ public class BookResponse {
     private Integer pageCount ;
     private Integer stock ;
     private BookStatus status; 
+    private String category ;
 
 }

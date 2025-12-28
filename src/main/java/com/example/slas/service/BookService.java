@@ -22,17 +22,22 @@ public class BookService {
     }
 
     // Add Book
-    public void addBook(AddBookRequest request) {
-
-        Book book = new Book() ;
+    public BookResponse addBook(AddBookRequest request) {
+    
+        Book book = new Book();
+        
         book.setTitle(request.getTitle()) ;
         book.setAuthor(request.getAuthor()) ;
+        book.setStock(request.getStock()) ;
         book.setIsbn(request.getIsbn()) ;
         book.setPageCount(request.getPageCount()) ;
-        book.setStock(request.getStock()) ;
         book.setStatus(BookStatus.AVAILABLE) ;
+        book.setCategory(request.getCategory()) ; 
 
-        bookRepository.save(book) ;
+        Book savedBook = bookRepository.save(book) ;
+
+        return mapToDto(savedBook) ;
+
     }
 
     // Delete Book
@@ -72,6 +77,7 @@ public class BookService {
         response.setPageCount(book.getPageCount()) ;
         response.setStock(book.getStock()) ;
         response.setStatus(book.getStatus()) ; 
+        response.setCategory(book.getCategory()) ;
         
         return response ;
 
