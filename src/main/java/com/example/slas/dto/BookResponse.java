@@ -14,5 +14,6 @@ public class BookResponse {
     private Integer stock ;
     private BookStatus status; 
     private String category ;
+    private String subCategory ;
 
 }

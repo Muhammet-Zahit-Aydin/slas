@@ -25,29 +25,37 @@
 
     </nav>
 
-    <div class="filter-container">
-        <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Kitap veya yazar ara..." onkeyup="filterBooks()">
+    <div class="outer-box">
+
+        <div class="filter-container">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search book or author..." onkeyup="filterBooks()">
+            </div>
+        </div>
+
+        <div class="category-nav">
+            <button class="cat-btn active" onclick="setCategory('all', this)">All</button>
+            
+            <button class="cat-btn" onclick="setCategory('Fantasy', this)">Fantasy</button>
+            
+            <button class="cat-btn" onclick="setCategory('Fiction', this)">Fiction</button>
+            <button class="cat-btn" onclick="setCategory('Sci-Fi', this)">Sci-Fi</button>
+            <button class="cat-btn" onclick="setCategory('History', this)">History</button>
+            <button class="cat-btn" onclick="setCategory('Philosophy', this)">Philosophy</button>
+            <button class="cat-btn" onclick="setCategory('Children', this)">Children</button>
+        </div>
+
+        <div id="subCategoryNav" class="subcategory-nav" style="display: none;">
+            </div>
+
+        <div id="bookList" class="book-grid"></div>
+
+            <div id="bookList" class="book-grid">
+            </div>
+
         </div>
     </div>
-
-    <div class="category-nav">
-        <button class="cat-btn active" onclick="setCategory('all', this)">All</button>
-        <button class="cat-btn" onclick="setCategory('Fantasy', this)">Fantasy</button>
-        <button class="cat-btn" onclick="setCategory('Novel', this)">Novel</button>
-        <button class="cat-btn" onclick="setCategory('Sci-Fi', this)">Sci-Fi</button>
-        <button class="cat-btn" onclick="setCategory('History', this)">History</button>
-        <button class="cat-btn" onclick="setCategory('Philosophy', this)">Philosophy</button>
-        <button class="cat-btn" onclick="setCategory('Children', this)">Children</button>
-    </div>
-
-<div id="bookList" class="book-grid"></div>
-
-    <div id="bookList" class="book-grid">
-    </div>
-
-</div>
 
     <script src="app.js"></script>
 

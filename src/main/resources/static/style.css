@@ -270,36 +270,84 @@ button:disabled {
 }
 
 .category-nav {
+
     display: flex ;
     gap: 10px ;
     margin-bottom: 20px ;
-    overflow-x: auto ; /* Mobilde sığmazsa yana kaydırır */
-    padding-bottom: 5px ; /* Kaydırma çubuğu için boşluk */
+    overflow-x: auto ;
+    padding-bottom: 5px ;
+
 }
 
-/* Butonların Kendisi */
 .cat-btn {
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 20px; /* Hap şeklinde yuvarlak */
-    padding: 8px 16px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    white-space: nowrap; /* Yazı alt satıra geçmesin */
-    color: #555;
+
+    background-color: white ;
+    border: 1px solid #ddd ;
+    border-radius: 20px ;
+    padding: 8px 16px ;
+    font-size: 14px ;
+    cursor: pointer ;
+    transition: all 0.3s ease ;
+    white-space: nowrap ;
+    color: #555 ;
+
 }
 
-/* Üzerine gelince */
 .cat-btn:hover {
-    background-color: #f0f0f0;
-    border-color: #bbb;
+
+    background-color: #f0f0f0 ;
+    border-color: #bbb ;
+
 }
 
-/* Seçili Olan Buton (Aktif) */
 .cat-btn.active {
-    background-color: #007bff; /* Mavi arka plan */
+
+    background-color: #007bff ;
+    color: white ;
+    border-color: #007bff ;
+    box-shadow: 0 2px 5px rgba(0,123,255,0.3) ;
+
+}
+
+.outer-box {
+
+    margin: 20px ;
+
+}
+
+.subcategory-nav {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding-left: 20px; /* Biraz içeriden başlasın */
+    animation: fadeIn 0.5s; /* Açılırken efektli olsun */
+}
+
+/* Alt Kategori Butonları */
+.sub-btn {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 15px;
+    padding: 5px 12px;
+    font-size: 13px;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sub-btn:hover {
+    background-color: #e2e6ea;
+    color: #333;
+}
+
+.sub-btn.active {
+    background-color: #6c757d; /* Gri tonlarında aktiflik */
     color: white;
-    border-color: #007bff;
-    box-shadow: 0 2px 5px rgba(0,123,255,0.3);
+    border-color: #6c757d;
+}
+
+/* Açılış Animasyonu */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }

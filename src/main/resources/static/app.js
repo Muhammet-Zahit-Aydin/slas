@@ -137,6 +137,7 @@ function searchBooks() {
 // Global variable
 let allBooksData = []; 
 let currentCategory = 'all';
+let currentSubCategory = 'all';
 
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('bookList')) {
@@ -205,37 +206,87 @@ function renderBooks(booksToRender) {
     });
 }
 
+// Category Map
+const subCategoriesMap = {
+    'Fantasy': ['Epic', 'Dark', 'Mythology', 'Magic'],
+    'Fiction': ['Tension', 'Classic', 'Psychology', 'Adventure'],
+    'Sci-Fi': ['Space', 'Dystopia', 'Artifical Intelligence'],
+    'History': ['Ottoman', 'European', 'War'],
+    'Children': ['Fairytale', 'Educational'],
+    'Philosophy': ['Ancient', 'Modern']
+};
+
+// Main Category Selection
 function setCategory(category, btnElement) {
-
     currentCategory = category;
+    currentSubCategory = 'all';
 
+    // Set button colors
     document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+    btnElement.classList.add('active');
 
+    // Administrate sub menu
+    updateSubMenu(category);
+
+    // Filter
+    filterBooks();
+}
+
+// Sub Category Creation
+function updateSubMenu(mainCategory) {
+    const subNav = document.getElementById('subCategoryNav');
+    subNav.innerHTML = '';
+
+    // If select all hide sub categories
+    if (mainCategory === 'all' || !subCategoriesMap[mainCategory]) {
+        subNav.style.display = 'none';
+        return;
+    }
+
+    // Show sub category
+    subNav.style.display = 'flex';
+
+    // Add all button to see all sub categories
+    subNav.innerHTML += `<button class="sub-btn active" onclick="setSubCategory('all', this)">All</button>`;
+
+    // Find related sub categories
+    subCategoriesMap[mainCategory].forEach(sub => {
+        subNav.innerHTML += `<button class="sub-btn" onclick="setSubCategory('${sub}', this)">${sub}</button>`;
+    });
+}
+
+// Sub Category Selection
+function setSubCategory(subCat, btnElement) {
+    currentSubCategory = subCat;
+
+    // Set sub buttons color
+    document.querySelectorAll('.sub-btn').forEach(btn => btn.classList.remove('active'));
     btnElement.classList.add('active');
 
     filterBooks();
 }
 
-// Filtering function
+// Filter
 function filterBooks() {
-    const searchInput = document.getElementById('searchInput');
-    const searchText = searchInput ? searchInput.value.toLowerCase() : "";
+    const searchText = document.getElementById('searchInput').value.toLowerCase();
     
-    const selectedCategory = currentCategory; 
-
     const filteredList = allBooksData.filter(book => {
         const title = book.title ? book.title.toLowerCase() : "";
-        const author = book.author ? book.author.toLowerCase() : "";
         
-        const category = book.category ? book.category : "All"; 
+        // Null safety
+        const category = book.category ? book.category : "";
+        const subCategory = book.subCategory ? book.subCategory : "";
 
-        // Search Control
-        const matchesSearch = title.includes(searchText) || author.includes(searchText);
+        // Search control
+        const matchesSearch = title.includes(searchText);
 
-        // Category Control
-        const matchesCategory = (selectedCategory === "all") || (category === selectedCategory);
+        // Main category control
+        const matchesMainCat = (currentCategory === 'all') || (category === currentCategory);
 
-        return matchesSearch && matchesCategory;
+        // Sub category control
+        const matchesSubCat = (currentSubCategory === 'all') || (subCategory === currentSubCategory);
+
+        return matchesSearch && matchesMainCat && matchesSubCat;
     });
 
     renderBooks(filteredList);

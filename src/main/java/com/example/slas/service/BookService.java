@@ -33,6 +33,7 @@ public class BookService {
         book.setPageCount(request.getPageCount()) ;
         book.setStatus(BookStatus.AVAILABLE) ;
         book.setCategory(request.getCategory()) ; 
+        book.setSubCategory(request.getSubCategory()) ;
 
         Book savedBook = bookRepository.save(book) ;
 
@@ -78,6 +79,7 @@ public class BookService {
         response.setStock(book.getStock()) ;
         response.setStatus(book.getStatus()) ; 
         response.setCategory(book.getCategory()) ;
+        response.setSubCategory(book.getSubCategory()) ;
         
         return response ;
 

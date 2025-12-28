@@ -11,5 +11,6 @@ public class AddBookRequest {
     private Integer pageCount ;
     private Integer stock ;
     private String category ;
+    private String subCategory ;
 
 }
